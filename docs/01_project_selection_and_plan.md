@@ -121,9 +121,10 @@ Dataset facts for ideas 2–6 come from general knowledge and are **❌ Not veri
 | Features | UCI says "21 features". Its description text also says "35 features" (an inconsistency on the page). | ⚠️ confirm when loading |
 | Feature list | 10 names confirmed on the UCI page (HighBP … PhysActivity). The rest are from the Kaggle listing. | ⚠️ confirm when loading |
 | Target | `Diabetes_binary`. UCI: "0 = no diabetes, 1 = prediabetes or diabetes" | ✅ (but see the note below) |
-| Classes | 218,334 negative / 35,346 positive (13.9% positive), as reported by Aich et al. 2025 | ⚠️ recompute in EDA |
-| Missing values | "No" according to UCI | ✅ (recheck in EDA) |
-| Duplicates | Expected to be many, because most features are binary or bucketed | ❌ check in EDA |
+| Classes | 218,334 negative (86.1%) / 35,346 positive (13.9%), from our `src/data_loader.py` run | ✅ |
+| Missing values | 0 (our run) | ✅ |
+| Duplicates | 24,206 exact duplicate rows (9.5%) (our run) | ✅ |
+| Value ranges | All match the codebook. MentHlth/PhysHlth go 0–30 (UCI text says "1-30"). | ✅ |
 | Sensitive attributes | Sex, Income, Education (flagged by UCI) | ✅ |
 | Release | Linked on UCI on 25-Sep-2023. Survey data is from 2015 (UCI points to the BRFSS 2014 page, so the survey year is ambiguous). The Kaggle version was published around 2021 ❌ | ⚠️ |
 | Licence | UCI says "See linked dataset for licensing". BRFSS is US-government public data. Kaggle licence not checked. | ❌ verify |
