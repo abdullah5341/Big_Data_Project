@@ -1,0 +1,16 @@
+model,multiplier,rows,fit_seconds,peak_python_memory_mb,predictions_per_second
+Logistic Regression,0.25,40157,0.16,18.0,3594573
+Logistic Regression,0.5,80315,0.12,33.5,3599836
+Logistic Regression,1.0,160631,0.26,67.0,3186838
+Logistic Regression,2.0,321262,0.53,134.0,3877137
+Logistic Regression,4.0,642524,1.01,268.0,3708787
+Random Forest,0.25,40157,3.05,32.2,306129
+Random Forest,0.5,80315,4.09,70.2,261957
+Random Forest,1.0,160631,9.44,142.2,223630
+Random Forest,2.0,321262,23.86,275.7,204823
+Random Forest,4.0,642524,59.03,545.2,176036
+XGBoost,0.25,40157,0.89,3.9,1003697
+XGBoost,0.5,80315,1.2,7.8,992225
+XGBoost,1.0,160631,1.78,15.5,989661
+XGBoost,2.0,321262,3.35,30.9,923015
+XGBoost,4.0,642524,6.19,61.7,957784
