@@ -280,7 +280,6 @@ Raw data (UCI 891, via ucimlrepo)
 - **Secondary:** precision, specificity, accuracy, confusion matrix, training time
 - **Why accuracy is not enough:** a model that predicts "no diabetes" for everyone already gets ≈86% accuracy.
 - **Plots:** ROC curves (3 models on one plot), PR curves, 3 confusion matrices, a calibration curve for the best model (optional)
-- **Statistical check (optional, simple):** 95% bootstrap confidence intervals for test AUC
 
 ### Final comparison table (fill in only after experiments)
 | Model | Accuracy | Precision | Recall | F1 | ROC-AUC | PR-AUC | Train time (s) |
@@ -345,7 +344,6 @@ n/s = not stated in the part we read. \* = confirm against the paper's table.
 
 Page 1, **Risk check**: form → Predict → probability gauge/bar, risk band, SHAP chart, plain-English summary (e.g. "high blood pressure and BMI 34 increased your estimated risk").
 Page 2, **Model info**: comparison table, ROC curve, global SHAP plot (loaded from `results/`).
-Optional: CSV upload for batch prediction.
 Not included: login, database, Docker, cloud.
 
 ---
@@ -508,8 +506,8 @@ Format: **Short** · **Detailed** · ❌ *Don't say*
 | 3 EDA (Wk 2–3) | The 6 essential plots + quality table | `notebooks/01_eda.ipynb`, `figures/eda_*` | Imbalance, duplicates | Too many plots with no interpretation |
 | 4 Preprocessing (Wk 3–4) | Deduplicate, split, pipeline, features | `src/preprocess.py`, `data/processed/` | Why split first | Scaling before splitting |
 | 5 Models (Wk 4–6) | LR/RF/XGB + tuning + thresholds | `src/train.py`, `models/*.joblib` | Hyperparameters you tuned | Tuning on test |
-| 6 Evaluation (Wk 6–7) | Metrics, curves, bootstrap CI, scaling benchmark | `src/evaluate.py`, `results/metrics.csv` | Every metric | Reporting only accuracy |
-| 7 XAI + errors (Wk 7–8) | SHAP plots, FN/FP analysis, subgroup checks | `src/explain.py`, `notebooks/03_error_analysis.ipynb` | How to read a beeswarm plot | Causal claims |
+| 6 Evaluation (Wk 6–7) | Metrics, curves, scaling benchmark | `src/evaluate.py`, `results/metrics.csv` | Every metric | Reporting only accuracy |
+| 7 XAI + errors (Wk 7–8) | SHAP plots, FN/FP analysis, subgroup checks | `src/explain.py`, `notebooks/02_error_analysis.ipynb` | How to read a beeswarm plot | Causal claims |
 | 8 Prototype (Wk 8–9) | Streamlit app | `app/app.py` | How the app loads the pipeline | Re-implementing preprocessing in the app |
 | 9 Report (Wk 9–12) | IEEE LaTeX/Word template | `report/` | Your own story | AI-written prose over 20% |
 | 10 Presentation (Wk 12–13) | 10 slides + demo rehearsal + backup video | `presentation/` | Timings | Overrunning the demo |
@@ -523,7 +521,7 @@ Big_Data_Project/
 ├── data/
 │   ├── raw/            # original download (git-ignored, re-downloadable)
 │   └── processed/      # train/val/test splits (git-ignored)
-├── notebooks/          # 01_eda, 02_modelling, 03_error_analysis (exploration + figures)
+├── notebooks/          # 01_eda, 02_error_analysis (exploration + figures)
 ├── src/                # reusable code: data_loader, preprocess, train, evaluate, explain, config
 ├── models/             # saved pipelines (.joblib)
 ├── app/                # Streamlit app
@@ -551,7 +549,7 @@ Big_Data_Project/
 | streamlit | Web prototype |
 | jupyter | Notebooks |
 
-**Run order:** `src/data_loader.py` → `notebooks/01_eda.ipynb` → `src/preprocess.py` → `src/train.py` → `src/evaluate.py` → `src/explain.py` → `notebooks/03_error_analysis.ipynb` → `streamlit run app/app.py`.
+**Run order:** `src/data_loader.py` → `notebooks/01_eda.ipynb` → `src/preprocess.py` → `src/train.py` → `src/evaluate.py` → `src/explain.py` → `notebooks/02_error_analysis.ipynb` → `streamlit run app/app.py`.
 
 We will build these **one script at a time**, each explained before moving on.
 

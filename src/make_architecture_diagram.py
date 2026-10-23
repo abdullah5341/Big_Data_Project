@@ -1,7 +1,11 @@
-"""Draws the system architecture diagram for the report and slides.
+"""
+STEP 8 - Draw the system architecture diagram for the report and slides.
 
-Run:  python src/make_architecture_diagram.py
-Output: figures/architecture.png
+Run:     python src/make_architecture_diagram.py
+Creates: figures/architecture.png
+
+This file only draws boxes and arrows with matplotlib; there is no machine learning in it.
+You can also redraw the same diagram yourself in draw.io or PowerPoint.
 """
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch

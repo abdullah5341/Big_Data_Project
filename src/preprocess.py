@@ -1,14 +1,14 @@
-"""Step 2: clean the data, engineer features, and create a leakage-safe train/validation/test split.
+"""
+STEP 2 - Clean the data, add two new features, and split it into train / validation / test.
 
-Run:  python src/preprocess.py
-Output: data/processed/{train,val,test}.csv and results/split_summary.csv
+Run:     python src/preprocess.py
+Creates: data/processed/train.csv, val.csv, test.csv and results/split_summary.csv
 
-Leakage rules followed here:
-- Duplicates are removed BEFORE splitting, so no identical row can sit in both train and test.
-- Only row-wise feature engineering happens here (each new value uses one row's own answers),
-  so nothing is learned from other rows or from the test set.
-- Anything that is *fitted* (scaling, class weights, feature selection, thresholds) happens later,
-  inside the model pipeline, on training data only.
+How this step avoids data leakage:
+- Duplicates are removed BEFORE splitting, so the same row cannot end up in both train and test.
+- The two new features only use each person's own answers, so nothing is learned from other rows.
+- Anything that has to learn from the data (scaling, class weights, the threshold) happens later
+  and uses the training data only.
 """
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -18,70 +18,84 @@ from config import (BMI_BINS, BMI_LABELS, COMORBIDITY_COLUMNS, PROCESSED_DIR, RA
 from data_loader import load_dataset
 
 
-def remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
-    """Drop exact duplicate rows and report how this changes the class balance."""
-    before_rate = df[TARGET].mean()
-    deduplicated = df.drop_duplicates().reset_index(drop=True)
-    removed = len(df) - len(deduplicated)
-    print(f"Removed {removed:,} duplicate rows: {len(df):,} -> {len(deduplicated):,}")
-    print(f"Positive class share: {before_rate:.2%} -> {deduplicated[TARGET].mean():.2%}")
-    return deduplicated
+def remove_duplicates(df):
+    """Drop rows that are exact copies of another row."""
+    rows_before = len(df)
+    share_before = df[TARGET].mean()
+
+    df = df.drop_duplicates().reset_index(drop=True)
+
+    print(f"Removed {rows_before - len(df):,} duplicate rows: {rows_before:,} -> {len(df):,}")
+    # Most duplicates are healthy people, so removing them raises the diabetes share a little.
+    print(f"Diabetes share: {share_before:.2%} -> {df[TARGET].mean():.2%}")
+    return df
 
 
-def add_engineered_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Add two clinically meaningful features. Both are calculated from a single row, so no leakage."""
+def add_engineered_features(df):
+    """Add BMICategory and ComorbidityCount. The web app uses this same function."""
     df = df.copy()
-    # Groups raw BMI into the WHO bands that clinicians actually use.
+    # BMI group the way doctors use it: 0 underweight, 1 normal, 2 overweight, 3 obese.
     df["BMICategory"] = pd.cut(df["BMI"], bins=BMI_BINS, labels=BMI_LABELS, right=False).astype(int)
-    # Multiple chronic conditions together are a stronger risk signal than any one alone.
+    # Several chronic conditions together are a stronger warning sign than one alone.
     df["ComorbidityCount"] = df[COMORBIDITY_COLUMNS].sum(axis=1)
     return df
 
 
-def split_data(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """Stratified 70/15/15 split. Stratifying keeps the same diabetes share in every part."""
+def split_data(df):
+    """Split into 70% train, 15% validation and 15% test.
+
+    stratify=... keeps the same diabetes share (about 15%) in all three parts.
+    """
+    # First, cut off the 15% test set.
     train_val, test = train_test_split(
         df, test_size=TEST_SIZE, stratify=df[TARGET], random_state=RANDOM_STATE)
-    # VAL_SIZE is a share of the whole dataset, so rescale it to a share of the remaining rows.
-    val_share_of_remaining = VAL_SIZE / (1 - TEST_SIZE)
+
+    # Then split the remaining 85% into train and validation.
+    # 15% of all the data is 0.15 / 0.85 = 17.6% of what is left.
+    val_share = VAL_SIZE / (1 - TEST_SIZE)
     train, val = train_test_split(
-        train_val, test_size=val_share_of_remaining, stratify=train_val[TARGET], random_state=RANDOM_STATE)
+        train_val, test_size=val_share, stratify=train_val[TARGET], random_state=RANDOM_STATE)
     return train, val, test
 
 
-def check_no_overlap(train: pd.DataFrame, val: pd.DataFrame, test: pd.DataFrame) -> None:
-    """Fail loudly if any identical row appears in more than one split."""
-    columns = list(train.columns)
-    for name_a, a, name_b, b in [("train", train, "val", val), ("train", train, "test", test),
-                                 ("val", val, "test", test)]:
-        shared = a.merge(b, on=columns, how="inner")
-        assert shared.empty, f"{len(shared)} identical rows shared between {name_a} and {name_b}"
-    print("Overlap check passed: no identical rows shared between splits.")
+def count_shared_rows(part_a, part_b):
+    """How many identical rows appear in both parts? It should be 0."""
+    shared = part_a.merge(part_b, on=list(part_a.columns), how="inner")
+    return len(shared)
 
 
-def summarise_splits(splits: dict[str, pd.DataFrame]) -> pd.DataFrame:
-    summary = pd.DataFrame({
-        "rows": {name: len(part) for name, part in splits.items()},
-        "positives": {name: int(part[TARGET].sum()) for name, part in splits.items()},
-        "positive_share": {name: round(part[TARGET].mean(), 4) for name, part in splits.items()},
-    })
-    print("\nSplit summary:")
-    print(summary.to_string())
-    return summary
+def check_no_overlap(train, val, test):
+    """Stop with an error if any row appears in two different splits."""
+    assert count_shared_rows(train, val) == 0, "train and validation share rows"
+    assert count_shared_rows(train, test) == 0, "train and test share rows"
+    assert count_shared_rows(val, test) == 0, "validation and test share rows"
+    print("Overlap check passed: no row appears in two splits.")
 
 
-def main() -> None:
-    df = remove_duplicates(load_dataset())
+def main():
+    df = load_dataset()
+    df = remove_duplicates(df)
     df = add_engineered_features(df)
     train, val, test = split_data(df)
     check_no_overlap(train, val, test)
 
-    splits = {"train": train, "val": val, "test": test}
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    for name, part in splits.items():
+
+    summary_rows = []
+    for name, part in [("train", train), ("val", val), ("test", test)]:
         part.to_csv(PROCESSED_DIR / f"{name}.csv", index=False)
-    summarise_splits(splits).to_csv(RESULTS_DIR / "split_summary.csv")
+        summary_rows.append({
+            "split": name,
+            "rows": len(part),
+            "positives": int(part[TARGET].sum()),
+            "positive_share": round(part[TARGET].mean(), 4),
+        })
+
+    summary = pd.DataFrame(summary_rows)
+    summary.to_csv(RESULTS_DIR / "split_summary.csv", index=False)
+    print("\nSplit summary:")
+    print(summary.to_string(index=False))
 
 
 if __name__ == "__main__":

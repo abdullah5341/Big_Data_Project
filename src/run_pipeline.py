@@ -1,10 +1,9 @@
-"""Runs the whole offline pipeline in order, so all results can be reproduced with one command.
-
-Run:  python src/run_pipeline.py            (about 15-20 minutes; hyperparameter search dominates)
-The two notebooks (01_eda, 03_error_analysis) are run separately in Jupyter.
 """
-import time
+Runs all the steps in order, so every result can be recreated with one command.
 
+Run:  python src/run_pipeline.py      (about 15-20 minutes; tuning Random Forest takes the longest)
+The two notebooks (01_eda and 02_error_analysis) are opened and run separately in Jupyter.
+"""
 import data_loader
 import evaluate
 import explain
@@ -15,23 +14,24 @@ import scalability
 import train
 
 STEPS = [
-    ("Download data + quality report", lambda: data_loader.print_quality_report(data_loader.download_dataset())),
-    ("Deduplicate, engineer features, split", preprocess.main),
-    ("Train and tune models", train.main),
-    ("Evaluate once on the test set", evaluate.main),
-    ("SHAP explanations", explain.main),
-    ("Feature selection experiment", feature_selection.main),
-    ("Scalability benchmark", scalability.main),
-    ("Architecture diagram", make_architecture_diagram.main),
+    ("Step 1: download the data and check its quality", data_loader.main),
+    ("Step 2: remove duplicates, add features, split", preprocess.main),
+    ("Step 3: train and tune the three models", train.main),
+    ("Step 4: evaluate once on the test set", evaluate.main),
+    ("Step 5: SHAP explanations", explain.main),
+    ("Step 6: feature selection", feature_selection.main),
+    ("Step 7: scalability test", scalability.main),
+    ("Step 8: architecture diagram", make_architecture_diagram.main),
 ]
 
 
-def main() -> None:
-    for number, (title, step) in enumerate(STEPS, start=1):
-        print(f"\n{'=' * 70}\nStep {number}/{len(STEPS)}: {title}\n{'=' * 70}")
-        start = time.perf_counter()
-        step()
-        print(f"-- done in {time.perf_counter() - start:.1f}s")
+def main():
+    for title, run_step in STEPS:
+        print("\n" + "=" * 60)
+        print(title)
+        print("=" * 60)
+        run_step()
+    print("\nAll steps finished.")
 
 
 if __name__ == "__main__":
