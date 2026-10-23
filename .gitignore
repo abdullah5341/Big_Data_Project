@@ -1,0 +1,15 @@
+# Data (re-downloadable from UCI)
+data/raw/*
+data/processed/*
+!data/**/.gitkeep
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+# Large model files (keep only final small ones if needed)
+models/*.joblib
+!models/.gitkeep
+.env
+.DS_Store
