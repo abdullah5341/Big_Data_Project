@@ -36,3 +36,15 @@ CV_FOLDS = 5
 # which keeps our tuning comparable with the literature.
 TUNING_METRIC = "roc_auc"
 SEARCH_ITERATIONS = {"logistic_regression": 6, "random_forest": 8, "xgboost": 20}
+
+# Models in the order they appear in every table and figure, with display names and fixed colours.
+MODEL_NAMES = {
+    "dummy": "Dummy (majority)",
+    "logistic_regression": "Logistic Regression",
+    "random_forest": "Random Forest",
+    "xgboost": "XGBoost",
+}
+MODEL_COLORS = {"logistic_regression": "#2a78d6", "random_forest": "#eb6834", "xgboost": "#1baf7a"}
+
+# Bootstrap resamples of the test set, used for 95% confidence intervals.
+BOOTSTRAP_ROUNDS = 1000

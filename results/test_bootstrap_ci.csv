@@ -1,0 +1,11 @@
+model,metric,ci_low,ci_high
+Logistic Regression,roc_auc,0.8084,0.8194
+Logistic Regression,pr_auc,0.4133,0.4403
+Logistic Regression,recall,0.6039,0.6295
+Random Forest,roc_auc,0.8127,0.8239
+Random Forest,pr_auc,0.4328,0.4607
+Random Forest,recall,0.6118,0.6378
+XGBoost,roc_auc,0.816,0.8271
+XGBoost,pr_auc,0.4392,0.4683
+XGBoost,recall,0.6072,0.6334
+XGBoost minus Logistic Regression,roc_auc_difference,0.0058,0.0093
