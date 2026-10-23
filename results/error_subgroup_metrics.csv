@@ -1,0 +1,11 @@
+attribute,group,n,prevalence,recall,false_positive_rate,precision
+Sex group,Female,19075,0.142,0.616,0.155,0.397
+Sex group,Male,15347,0.167,0.625,0.2,0.385
+Age band,18-44,7385,0.043,0.281,0.025,0.34
+Age band,45-64,14453,0.154,0.597,0.158,0.409
+Age band,65+,12584,0.216,0.679,0.303,0.382
+Income band,Low (<$20k),5652,0.247,0.764,0.336,0.427
+Income band,Middle,12083,0.17,0.643,0.212,0.383
+Income band,High ($50k+),16687,0.109,0.485,0.103,0.366
+Education band,High school or less,11155,0.196,0.684,0.254,0.397
+Education band,Some college+,23267,0.132,0.575,0.139,0.386
