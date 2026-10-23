@@ -29,3 +29,10 @@ BMI_LABELS = [0, 1, 2, 3]  # ordinal codes: underweight, normal, overweight, obe
 
 # Chronic conditions counted in the engineered "ComorbidityCount" feature.
 COMORBIDITY_COLUMNS = ["HighBP", "HighChol", "Stroke", "HeartDiseaseorAttack"]
+
+# Hyperparameter search: stratified k-fold CV on the TRAINING set only.
+CV_FOLDS = 5
+# ROC-AUC is threshold-independent and is the metric most published studies report,
+# which keeps our tuning comparable with the literature.
+TUNING_METRIC = "roc_auc"
+SEARCH_ITERATIONS = {"logistic_regression": 6, "random_forest": 8, "xgboost": 20}

@@ -1,0 +1,4 @@
+model,cv_roc_auc_mean,cv_roc_auc_std,val_roc_auc,val_pr_auc,threshold,fit_seconds,search_seconds,best_params
+logistic_regression,0.8073,0.0029,0.8111,0.414,0.6206,0.51,15.2,{'C': 0.0042}
+random_forest,0.8113,0.0031,0.8146,0.4304,0.5985,10.09,545.3,"{'max_depth': 17, 'max_features': 'sqrt', 'min_samples_leaf': 27, 'n_estimators': 224}"
+xgboost,0.815,0.0026,0.8173,0.4363,0.6391,1.99,313.6,"{'colsample_bytree': 0.9161, 'learning_rate': 0.0807, 'max_depth': 4, 'min_child_weight': 7, 'n_estimators': 240, 'subsample': 0.9745}"
