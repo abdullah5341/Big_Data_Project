@@ -53,3 +53,9 @@ BOOTSTRAP_ROUNDS = 1000
 SHAP_SAMPLE_SIZE = 3000
 # The model we explain and deploy (best validation ROC-AUC in train.py).
 DEPLOYED_MODEL = "xgboost"
+
+# Scores within this distance of the threshold are reported as "uncertain". The error analysis
+# showed these cases have a much higher error rate than scores further away.
+UNCERTAIN_MARGIN = 0.10
+# Valid BMI range in the training data; inputs outside it are out of distribution for the model.
+BMI_MIN, BMI_MAX = 12, 98

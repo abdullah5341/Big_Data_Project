@@ -11,5 +11,7 @@ venv/
 # Large model files (keep only final small ones if needed)
 models/*.joblib
 !models/.gitkeep
+# The deployed model is small (~0.4 MB), so it is committed and the app works right after cloning.
+!models/xgboost.joblib
 .env
 .DS_Store
