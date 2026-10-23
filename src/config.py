@@ -48,3 +48,8 @@ MODEL_COLORS = {"logistic_regression": "#2a78d6", "random_forest": "#eb6834", "x
 
 # Bootstrap resamples of the test set, used for 95% confidence intervals.
 BOOTSTRAP_ROUNDS = 1000
+
+# SHAP is computed on a random sample of test rows: enough for stable global patterns, fast on a laptop.
+SHAP_SAMPLE_SIZE = 3000
+# The model we explain and deploy (best validation ROC-AUC in train.py).
+DEPLOYED_MODEL = "xgboost"
