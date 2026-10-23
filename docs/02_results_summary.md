@@ -19,12 +19,11 @@
 | Model | Accuracy | Precision | Recall | Specificity | F1 | ROC-AUC | PR-AUC | Train time |
 |---|---|---|---|---|---|---|---|---|
 | Dummy (majority) | 0.847 | 0.000 | 0.000 | 1.000 | 0.000 | 0.500 | 0.153 | – |
-| Logistic Regression | 0.786 | 0.378 | 0.617 | 0.817 | 0.469 | 0.814 | 0.427 | 0.3–0.5 s |
+| Logistic Regression | 0.786 | 0.378 | 0.617 | 0.817 | 0.469 | 0.814 | 0.427 | ~0.3 s |
 | Random Forest | 0.790 | 0.385 | 0.625 | 0.819 | 0.476 | 0.819 | 0.447 | ~9–10 s |
 | **XGBoost** | 0.794 | 0.391 | 0.620 | 0.826 | **0.480** | **0.822** | **0.454** | ~2 s |
 
-- **95% bootstrap CIs (ROC-AUC):** LR 0.808–0.819 · RF 0.813–0.824 · XGB 0.816–0.827
-- **XGB − LR AUC difference:** 95% CI **0.0058–0.0093**. The difference is real, but under 1 point (answers RQ2).
+- **XGBoost vs Logistic Regression:** ROC-AUC 0.822 vs 0.814 (+0.008). XGBoost is the best model, but only slightly better than the simple model (answers RQ2).
 - **Thresholds (chosen on validation, max F1):** LR 0.62 · RF 0.60 · XGB 0.64
 - **CV ROC-AUC on train (5-fold):** LR 0.807 ± 0.003 · RF 0.811 ± 0.003 · XGB 0.815 ± 0.003. Validation and test agree, so there is no sign of overfitting.
 
@@ -41,9 +40,8 @@ n/s = not stated in the part we read. ✅/⚠️ = verification status. **Read t
 
 **How to argue it:** our AUC sits within about 0.01 of the three studies that evaluate on real, imbalanced data. The studies reporting about 0.99 use balanced or resampled evaluation, or don't report when resampling happened. Those numbers are not comparable, so we do **not** claim to beat or lose to them. Our Accuracy (0.79) is lower than P1's 0.86 because we choose the threshold for F1/recall, not for accuracy. Even the Dummy model scores 0.85 accuracy.
 
-## 4. Explainability (`results/feature_importance_comparison.csv`)
+## 4. Explainability (`results/shap_importance.csv`)
 - **Top 5 by mean |SHAP| (XGBoost):** GenHlth, ComorbidityCount, Age, BMI, HighBP
-- **Ranking agreement (Spearman):** XGB SHAP vs LR |coef| **0.85** · XGB SHAP vs RF impurity **0.81** · LR vs RF **0.75**
 - **Discussion points:**
   - ComorbidityCount absorbed the credit of HighChol, Stroke and HeartDisease. This is the correlated-features limitation of SHAP.
   - CholCheck = 0 lowers predicted risk. This is plausibly *diagnosis/access bias*: people outside the healthcare system are less often diagnosed.
@@ -66,7 +64,7 @@ XGBoost keeps its tuned hyperparameters.
 - **Decision:** the deployed app keeps all 23 features (best test AUC; the difference is small). A shortened questionnaire is future work.
 - The permutation ranking agrees with SHAP on the top 4 (GenHlth, Age, BMI, ComorbidityCount).
 
-## 5. Error analysis (`notebooks/03_error_analysis.ipynb`)
+## 5. Error analysis (`notebooks/02_error_analysis.ipynb`)
 | Finding | Number |
 |---|---|
 | FN / FP / TP / TN | 1,999 / 5,086 / 3,266 / 24,071 |
@@ -93,18 +91,16 @@ XGBoost keeps its tuned hyperparameters.
 → Sex is balanced. **Young adults (recall 0.28) and high-income people (0.49) are missed most.** The model follows prevalence. Report this as a fairness limitation. A possible mitigation (future work) is group-specific thresholds.
 
 ## 6. Big Data platform evaluation, CLO3 (`results/scalability_benchmark.csv`)
-| Rows | LR fit | RF fit | XGB fit | XGB predictions/s |
+| Training rows | LR fit | RF fit | XGB fit | XGB predictions/s |
 |---|---|---|---|---|
-| 40k (25%) | 0.16 s | 3.1 s | 0.9 s | ~1.0 M |
-| 160k (100%) | 0.26 s | 9.4 s | 1.8 s | ~1.0 M |
-| 321k (2×) | 0.53 s | 23.9 s | 3.4 s | ~0.9 M |
-| 643k (4×) | 1.01 s | 59.0 s | 6.2 s | ~0.96 M |
+| 40k (25%) | 0.06 s | 1.6 s | 0.7 s | ~0.89 M |
+| 80k (50%) | 0.11 s | 3.4 s | 1.1 s | ~0.89 M |
+| 160k (100%) | 0.25 s | 9.1 s | 1.8 s | ~0.84 M |
 
-- The training DataFrame is **30.8 MB** in memory, so a single laptop is sufficient. Spark would add cluster start-up and serialisation overhead with no benefit at this size.
-- **XGBoost and LR scale roughly linearly.** Random Forest grows faster (about 6× time for 4× data) and produces a 64 MB model, which is a practical reason to deploy XGBoost.
-- Note: the 2× and 4× sizes are resampled copies, used **only** for timing. The memory column uses `tracemalloc`, which misses native (C++) allocations, so it is a lower bound.
+- The training data is **30.8 MB** in memory, so a single laptop is enough. Spark would add cluster start-up and data-transfer overhead with no benefit at this size.
+- **XGBoost's training time grows more slowly than the data** (4× the rows → about 2.4× the time). Random Forest grows faster (4× the rows → about 6× the time) and its saved model is 64 MB. This is a practical reason to deploy XGBoost.
 - **Future, about 100× (all BRFSS years ≈ 25M+ rows):** Parquet storage, then PySpark / Spark MLlib or distributed XGBoost (e.g. on Databricks). Same pipeline logic.
-- **Streaming:** questionnaire events → Kafka → scoring service with the saved pipeline (already about 1M predictions/s on one core group) → drift monitoring → scheduled retraining.
+- **Streaming:** questionnaire events → Kafka → scoring service with the saved pipeline (XGBoost already makes about 0.85 million predictions per second on this laptop) → drift monitoring → scheduled retraining.
 
 ## 7. Limitations to discuss
 1. Self-reported survey data. Labels miss undiagnosed diabetes. There are no lab features.
