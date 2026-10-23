@@ -49,6 +49,23 @@ n/s = not stated in the part we read. ✅/⚠️ = verification status. **Read t
   - CholCheck = 0 lowers predicted risk. This is plausibly *diagnosis/access bias*: people outside the healthcare system are less often diagnosed.
   - Heavy alcohol use lowers predicted risk. This is counter-intuitive and plausibly reverse causation (diagnosed people are told to stop drinking). It shows SHAP gives association, not causation.
 
+## 4b. Feature selection (`src/feature_selection.py`)
+**Method:** rank features by permutation importance in 5-fold CV on **train**. Choose the smallest top-k
+subset on **validation** whose ROC-AUC is within 0.002 of all features. Confirm once on **test**.
+XGBoost keeps its tuned hyperparameters.
+
+| k | 3 | 5 | 8 | **10** | 12 | 15 | 18 | 23 (all) |
+|---|---|---|---|---|---|---|---|---|
+| Val ROC-AUC | 0.790 | 0.811 | 0.815 | **0.816** | 0.817 | 0.817 | 0.817 | 0.818 |
+
+- **Selected (10):** GenHlth, Age, BMI, ComorbidityCount, CholCheck, HvyAlcoholConsump, Sex, Income, HighBP, MentHlth
+- **Test, all 23 vs selected 10:** ROC-AUC 0.822 vs 0.820 · PR-AUC 0.454 vs 0.450 · F1 0.480 vs 0.478 · Recall 0.620 vs 0.613
+- **Interpretation:** more than half the features add almost nothing. A shorter questionnaire is possible, which is useful for real screening.
+  Note that ComorbidityCount is built from HighBP, HighChol, Stroke and HeartDisease, and BMI needs height and weight. So
+  the 10 model features correspond to **12 survey questions** (vs 21).
+- **Decision:** the deployed app keeps all 23 features (best test AUC; the difference is small). A shortened questionnaire is future work.
+- The permutation ranking agrees with SHAP on the top 4 (GenHlth, Age, BMI, ComorbidityCount).
+
 ## 5. Error analysis (`notebooks/03_error_analysis.ipynb`)
 | Finding | Number |
 |---|---|

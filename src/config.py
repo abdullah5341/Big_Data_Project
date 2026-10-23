@@ -46,6 +46,12 @@ MODEL_NAMES = {
 }
 MODEL_COLORS = {"logistic_regression": "#2a78d6", "random_forest": "#eb6834", "xgboost": "#1baf7a"}
 
+# Feature selection: subset sizes to try, and how much validation ROC-AUC we accept losing
+# in exchange for a shorter questionnaire.
+FEATURE_SUBSET_SIZES = [3, 5, 8, 10, 12, 15, 18]
+FEATURE_SELECTION_AUC_TOLERANCE = 0.002
+PERMUTATION_REPEATS = 5
+
 # Bootstrap resamples of the test set, used for 95% confidence intervals.
 BOOTSTRAP_ROUNDS = 1000
 

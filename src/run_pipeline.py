@@ -8,6 +8,7 @@ import time
 import data_loader
 import evaluate
 import explain
+import feature_selection
 import make_architecture_diagram
 import preprocess
 import scalability
@@ -19,6 +20,7 @@ STEPS = [
     ("Train and tune models", train.main),
     ("Evaluate once on the test set", evaluate.main),
     ("SHAP explanations", explain.main),
+    ("Feature selection experiment", feature_selection.main),
     ("Scalability benchmark", scalability.main),
     ("Architecture diagram", make_architecture_diagram.main),
 ]

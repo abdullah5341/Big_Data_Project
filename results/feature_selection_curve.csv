@@ -1,0 +1,9 @@
+num_features,val_roc_auc,val_pr_auc,fit_seconds,features
+3,0.7895,0.3895,1.52,"GenHlth, Age, BMI"
+5,0.8114,0.4273,1.59,"GenHlth, Age, BMI, ComorbidityCount, CholCheck"
+8,0.8154,0.4316,1.66,"GenHlth, Age, BMI, ComorbidityCount, CholCheck, HvyAlcoholConsump, Sex, Income"
+10,0.8162,0.4324,1.66,"GenHlth, Age, BMI, ComorbidityCount, CholCheck, HvyAlcoholConsump, Sex, Income, HighBP, MentHlth"
+12,0.8168,0.4328,1.71,"GenHlth, Age, BMI, ComorbidityCount, CholCheck, HvyAlcoholConsump, Sex, Income, HighBP, MentHlth, DiffWalk, PhysHlth"
+15,0.8172,0.4353,1.8,"GenHlth, Age, BMI, ComorbidityCount, CholCheck, HvyAlcoholConsump, Sex, Income, HighBP, MentHlth, DiffWalk, PhysHlth, HighChol, Education, BMICategory"
+18,0.8171,0.4358,1.81,"GenHlth, Age, BMI, ComorbidityCount, CholCheck, HvyAlcoholConsump, Sex, Income, HighBP, MentHlth, DiffWalk, PhysHlth, HighChol, Education, BMICategory, Smoker, AnyHealthcare, Fruits"
+23,0.8175,0.4361,1.8,"GenHlth, Age, BMI, ComorbidityCount, CholCheck, HvyAlcoholConsump, Sex, Income, HighBP, MentHlth, DiffWalk, PhysHlth, HighChol, Education, BMICategory, Smoker, AnyHealthcare, Fruits, Stroke, NoDocbcCost, Veggies, HeartDiseaseorAttack, PhysActivity"

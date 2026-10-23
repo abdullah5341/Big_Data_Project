@@ -18,7 +18,7 @@ It is downloaded automatically. No manual download is needed.
 The full results and their discussion are in [docs/02_results_summary.md](docs/02_results_summary.md).
 
 ## Setup
-Requires Python 3.11+ (tested on 3.14).
+Tested on Python 3.14.8. `requirements.txt` pins the exact library versions used for the results.
 ```bash
 python -m venv .venv
 # Windows: .venv\Scripts\activate    |  Linux/macOS: source .venv/bin/activate
@@ -48,6 +48,7 @@ Or run the steps one by one:
 | 4 | `python src/train.py` | 5-fold CV tuning on train, threshold on validation | `models/*.joblib`, `results/training_summary.csv` |
 | 5 | `python src/evaluate.py` | One-time test evaluation, bootstrap CIs, curves | `results/test_*.csv`, `figures/eval_*` |
 | 6 | `python src/explain.py` | SHAP global and local explanations, importance comparison | `figures/xai_*`, `results/feature_importance_comparison.csv` |
+| 6b | `python src/feature_selection.py` | Permutation-importance ranking (train CV), subset size chosen on validation, confirmed on test | `figures/fs_01_*`, `results/feature_selection_*.csv` |
 | 7 | `notebooks/03_error_analysis.ipynb` | FN/FP profiles, subgroup fairness, hard cases | `figures/err_*`, `results/error_*.csv` |
 | 8 | `python src/scalability.py` | Training time, memory and throughput from 25% to 4× data | `figures/scale_01_*`, `results/scalability_benchmark.csv` |
 | 9 | `python src/make_architecture_diagram.py` | System architecture figure | `figures/architecture.png` |
