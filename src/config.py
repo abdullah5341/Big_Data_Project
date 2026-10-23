@@ -18,3 +18,14 @@ ID_COLUMN = "ID"
 
 # A fixed seed makes splits and models reproducible.
 RANDOM_STATE = 42
+
+# Split proportions: 70% train, 15% validation (tuning/threshold), 15% test (final, used once).
+VAL_SIZE = 0.15
+TEST_SIZE = 0.15
+
+# WHO adult BMI bands: <18.5 underweight, 18.5-24.9 normal, 25-29.9 overweight, >=30 obese.
+BMI_BINS = [0, 18.5, 25, 30, float("inf")]
+BMI_LABELS = [0, 1, 2, 3]  # ordinal codes: underweight, normal, overweight, obese
+
+# Chronic conditions counted in the engineered "ComorbidityCount" feature.
+COMORBIDITY_COLUMNS = ["HighBP", "HighChol", "Stroke", "HeartDiseaseorAttack"]
