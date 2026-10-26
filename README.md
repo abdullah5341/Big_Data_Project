@@ -17,6 +17,7 @@ It is downloaded automatically, so no manual download is needed.
 
 - All results and their discussion: [docs/02_results_summary.md](docs/02_results_summary.md)
 - How the code works, file by file: [docs/03_code_guide.md](docs/03_code_guide.md)
+- IEEE report: [report/](report/) (Word + PDF) · Presentation (10 slides, speaker notes): [presentation/](presentation/)
 
 ## Setup
 Tested on Python 3.14.8. `requirements.txt` pins the exact library versions used.

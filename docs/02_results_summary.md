@@ -28,15 +28,24 @@
 - **CV ROC-AUC on train (5-fold):** LR 0.807 ± 0.003 · RF 0.811 ± 0.003 · XGB 0.815 ± 0.003. Validation and test agree, so there is no sign of overfitting.
 
 ## 3. Comparison with published studies (same dataset)
-| Study | Year | Model | Acc | Prec | Rec | F1 | ROC-AUC | Our XGBoost | Difference (AUC) | Protocol note |
-|---|---|---|---|---|---|---|---|---|---|---|
-| Shechter & Shomron (JSIM) ✅ | 2026 | CatBoost | 0.86 | n/s | n/s | n/s | 0.83 | 0.822 | −0.008 | Imbalanced data; BRFSS split not fully stated |
-| Aich et al. (arXiv) ⚠️ | 2025 | GB + oversampling | n/s | n/s | n/s | ≈0.446 | ≈0.828 | 0.822 / F1 0.480 | ≈−0.006 | Oversampling on training folds only (leakage-safe) |
-| Preprint 202411.1265 ⚠️ | 2024 | XGBoost | n/s | n/s | n/s | n/s | 0.83 | 0.822 | ≈−0.008 | Not peer-reviewed |
-| Islam et al. (TCCE/arXiv) ✅ | 2025 | Stacking | 0.948 | 0.929 | 0.970 | 0.949 | 0.990 | 0.822 | −0.168 | SMOTE timing not stated; test-set size does not match a 20% split |
-| Majcherek et al. (PLOS ONE) ⚠️ | 2025 | Extra Trees | >0.90 | n/s | n/s | n/s | 0.99 | 0.822 | −0.168 | Abstract only; check the protocol in the full text |
+This is the final comparison used in the report (Table VI). It covers three studies; the requirement asks for at least three.
 
-n/s = not stated in the part we read. ✅/⚠️ = verification status. **Read the full papers before final use.**
+| Study | Year | Best model | Acc | Prec | Rec | F1 | ROC-AUC | Our XGBoost | Difference (AUC) | Imbalance handling / protocol |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Shechter & Shomron (JSIM, peer-reviewed) | 2026 | CatBoost | 0.86 | – | – | – | 0.83 | 0.822 | −0.008 | Resampling variants explored; evaluated on imbalanced data |
+| Majcherek et al. (PLOS ONE, peer-reviewed) | 2025 | Extra Trees | >0.90 | – | – | – | 0.99 | 0.822 | −0.168 | SMOTE / ADASYN / random oversampling |
+| Islam et al. (TCCE 2025 / arXiv) | 2025 | Stacking (XGB+KNN) | 0.948 | 0.929 | 0.970 | 0.949 | 0.990 | 0.822 | −0.168 | SMOTE + Tomek links; timing vs. split not stated; test-set size does not match a 20% split |
+
+– = not reported in the source.
+
+**Verification:**
+- **Shechter & Shomron:** checked against the article page.
+- **Islam et al.:** checked against the full arXiv text.
+- **Majcherek et al.:** the numbers come from the abstract. Its use of SMOTE, ADASYN and random oversampling was confirmed from the PLOS ONE article listing. The exact split ratio was not found.
+
+**Discussed in the text but not in the table:**
+- **Aich et al. (CopulaSMOTE):** oversampling only on the training folds; gains mainly in F1 and recall. Exact numbers were not verified, so they are left out.
+- **Preprint 202411.1265:** dropped, because its authors could not be verified.
 
 **How to argue it:** our AUC sits within about 0.01 of the three studies that evaluate on real, imbalanced data. The studies reporting about 0.99 use balanced or resampled evaluation, or don't report when resampling happened. Those numbers are not comparable, so we do **not** claim to beat or lose to them. Our Accuracy (0.79) is lower than P1's 0.86 because we choose the threshold for F1/recall, not for accuracy. Even the Dummy model scores 0.85 accuracy.
 
