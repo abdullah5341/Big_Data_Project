@@ -8,6 +8,14 @@ feature selection, a scalability test and a **Streamlit** web app.
 (DOI 10.24432/C53919): 253,680 survey answers, 21 features, target `Diabetes_binary`.
 It is downloaded automatically, so no manual download is needed.
 
+**Data download instructions:** `python src/data_loader.py` downloads the full dataset from UCI into
+`data/raw/` (internet connection needed). It can also be downloaded by hand from the UCI link above.
+A random **1,000-row sample** is included at `data/sample/sample_1000_rows.csv` so the data format
+can be seen without downloading. The full dataset is needed to reproduce the results.
+
+**Saved model:** `models/xgboost.joblib` (the deployed model, about 0.4 MB) is included.
+The other models are recreated by `python src/train.py`.
+
 ## Results (test set: 34,422 people, never used for training or tuning)
 | Model | Recall | Precision | F1 | ROC-AUC | PR-AUC |
 |---|---|---|---|---|---|
@@ -67,13 +75,14 @@ All randomness uses `RANDOM_STATE = 42` (in [src/config.py](src/config.py)), so 
 ## Folder structure
 ```
 ├── app/            Streamlit web app
-├── data/           raw + processed data (not in git; recreated by the scripts)
+├── data/           sample/ (1,000-row sample, in git); raw/ + processed/ are recreated by the scripts
 ├── docs/           project plan, results summary, code guide
 ├── figures/        all figures for the report and slides
 ├── models/         saved models (only xgboost.joblib is in git)
 ├── notebooks/      EDA and error analysis
 ├── results/        result tables (CSV)
 ├── src/            the pipeline scripts + settings
+├── submission/     final files to upload: report PDF, code ZIP, slides PDF
 └── requirements.txt
 ```
 
